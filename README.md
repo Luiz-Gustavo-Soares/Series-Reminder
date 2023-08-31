@@ -1,0 +1,1 @@
+# App desktop para guardar informações de series
