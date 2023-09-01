@@ -10,24 +10,31 @@ public class RememberProgram {
     private Date date;
     private String capaImg;
     private final String imgFundo = "src/imgs/fundo.jpg";
+    private String analize;
+    private int nota;
 
+    public RememberProgram(int id){
+        this.idDb = id;
+    }
 
-    public RememberProgram(){}
-
-    public RememberProgram(int id, String name, int ep, Date date, String img){
+    public RememberProgram(int id, String name, int ep, Date date, String img, String analize, int nota){
         this.idDb = id;
         this.name = name;
         this.ep = ep;
         this.date = date;
         this.capaImg = (img == null) ? imgFundo:img ;
+        this.analize = analize;
+        this.nota = nota;
     }
 
-    public RememberProgram(int id, String name, int ep, String img){
+    public RememberProgram(int id, String name, int ep, String img, String analize, int nota){
         this.idDb = id;
         this.name = name;
         this.ep = ep;
         this.date = new Date();
-        this.capaImg = (img.equals("")) ? imgFundo:img ;
+        this.capaImg = (img.equals("")) ? imgFundo:img;
+        this.analize = analize;
+        this.nota = nota;
     }
 
     public int getIdDb() {
@@ -68,11 +75,27 @@ public class RememberProgram {
         this.capaImg = capaImg;
     }
 
+    public String getAnalize() {
+        return analize;
+    }
+
+    public void setAnalize(String analize) {
+        this.analize = analize;
+    }
+
+    public int getNota() {
+        return nota;
+    }
+
+    public void setNota(int nota) {
+        this.nota = nota;
+    }
+
 
     @Override
     public String toString() {
         return "RememberProgram [idDb=" + idDb + ", name=" + name + ", ep=" + ep + ", date=" + date + ", capaImg="
-                + capaImg + "]";
+                + capaImg + ", analize=" + analize + ", nota=" + nota + "]";
     }
 
     @Override

@@ -32,7 +32,9 @@ public class Conecao {
                 "name varchar(150)," +
                 "ep int," +
                 "date Date,"+
-                "image varchar(150))";
+                "image varchar(150), "+
+                "analize TEXT,"+
+                "nota TINYINT)";
 
             statement.executeUpdate(SQL);
 
@@ -59,34 +61,16 @@ public class Conecao {
         }
     }
 
-    public boolean insertRemember(String name, int ep, java.util.Date d, String imagem) throws IOException {
-        java.sql.Date date = new java.sql.Date(d.getTime());
 
-        String capa = salvarArquivo(imagem, name);
-
-        String SQL = String.format(
-            "INSERT INTO rememberProgam (name, ep, date, image) "+
-            "VALUES ('%s', '%d', '%s', '%s')", name, ep, date, capa
-        );
-
-        try {
-            statement.executeUpdate(SQL);
-            return true;
-        } catch(SQLException e) {
-            System.err.println(e.getMessage());
-            return false;
-        }
-    }
-
-    public boolean insertRemember(String name, int ep, String imagem) throws IOException {
+    public boolean insertRemember(String name, int ep, String imagem, String analize, int nota) throws IOException {
         java.util.Date d = new java.util.Date();
         java.sql.Date date = new java.sql.Date(d.getTime());
         
         String capa = salvarArquivo(imagem, name);
 
         String SQL = String.format(
-            "INSERT INTO rememberProgam (name, ep, date, image) "+
-            "VALUES ('%s', '%d', '%s', '%s')", name, ep, date, capa
+            "INSERT INTO rememberProgam (name, ep, date, image, analize, nota) "+
+            "VALUES ('%s', '%d', '%s', '%s', '%s', '%d')", name, ep, date, capa, analize, nota
         );
         
         try {
@@ -120,7 +104,7 @@ public class Conecao {
     public ArrayList<RememberProgram>  selectAllRemembers() throws ParseException{
         ArrayList<RememberProgram> rememberList = new ArrayList<RememberProgram>();
 
-        String SQL = "SELECT id, name, ep, date, image FROM rememberProgam";
+        String SQL = "SELECT id, name, ep, date, image, analize, nota FROM rememberProgam";
 
         try {
             ResultSet rs = statement.executeQuery(SQL);
@@ -128,7 +112,7 @@ public class Conecao {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 java.util.Date date= format.parse(rs.getString("date"));
                 
-                RememberProgram remeber = new RememberProgram(rs.getInt("id"), rs.getString("name"), rs.getInt("ep"), date, rs.getString("image")); 
+                RememberProgram remeber = new RememberProgram(rs.getInt("id"), rs.getString("name"), rs.getInt("ep"), date, rs.getString("image"), rs.getString("analize"), rs.getInt("nota")); 
                 rememberList.add(remeber);
             }
         } catch (SQLException e) {
@@ -167,7 +151,7 @@ public class Conecao {
         }
     } 
 
-    public boolean updateEp(int id, int ep, java.util.Date d) {
+    public boolean updateRemember(int id, int ep, java.util.Date d, String analize, int nota) {
         String SQL = String.format("SELECT * FROM rememberProgam WHERE id == %s", id);
 
         try {
@@ -177,9 +161,11 @@ public class Conecao {
 
                 java.sql.Date date = new java.sql.Date(d.getTime());
 
+                if (analize.isBlank()) analize = rs.getString("analize");
+
                 SQL = String.format("UPDATE rememberProgam " +
-                "SET ep = '%d', date = '%s' "+
-                "WHERE id = %d", ep, date, id);
+                "SET ep = '%d', date = '%s', analize = '%s', nota = '%d' "+
+                "WHERE id = %d", ep, date, analize, nota, id);
 
                 try {
                     statement.executeUpdate(SQL);

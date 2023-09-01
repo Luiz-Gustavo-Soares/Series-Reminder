@@ -13,14 +13,15 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import remember.Conecao;
@@ -32,8 +33,6 @@ public class LayoutController {
     private Conecao cn = new Conecao();
     private String caminhoImage = null;
     private FileChooser filechooser = new FileChooser();
-    private FlowPane seriesBox = new FlowPane();
-    private SerieBoxController controllerRemember = new SerieBoxController();
 
     @FXML
     private Button add;
@@ -48,10 +47,19 @@ public class LayoutController {
     private Button sArq;
 
     @FXML
-    private AnchorPane areaPrincipal;
+    private FlowPane seriesBox;
     
     @FXML
     private ImageView imgFundo;
+
+    @FXML
+    private TabPane tabArea;
+
+    @FXML
+    private TextArea analize;
+
+    @FXML
+    private Spinner<Integer> nota;
 
     @FXML
     public void initialize() throws ParseException, IOException {
@@ -59,11 +67,13 @@ public class LayoutController {
         valueFactory.setValue(1);
         episodio.setValueFactory(valueFactory);
 
-        seriesBox.setHgap(15);
-        seriesBox.setVgap(15);
-        seriesBox.setPrefSize(550, 500);
-        setAreaPrincipalSeriesBox();
- 
+        SpinnerValueFactory<Integer> valueFactoryNt = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10);
+        valueFactoryNt.setValue(1);
+        nota.setValueFactory(valueFactoryNt);
+
+        tabArea.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+
+        attAllRemembers();
     }
 
     @FXML
@@ -71,7 +81,7 @@ public class LayoutController {
         cn.createConnection();
         
         if (caminhoImage!=null) {
-            cn.insertRemember(nome.getText(), episodio.getValue(), caminhoImage);
+            cn.insertRemember(nome.getText(), episodio.getValue(), caminhoImage, analize.getText(), nota.getValue());
         } else {
             cn.insertRemember(nome.getText(), episodio.getValue());
         } 
@@ -95,27 +105,17 @@ public class LayoutController {
     }
 
 
-    private void setAreaPrincipalSeriesBox() throws ParseException, IOException{
-        areaPrincipal.getChildren().clear();
+    private void createNewTabRemember(RememberProgram remember) throws IOException{
         
-        ScrollPane sp = new ScrollPane();
-        sp.setContent(seriesBox);
-        sp.fitToWidthProperty().set(false);
-        sp.setPrefSize(570, 500);
-        areaPrincipal.getChildren().add(sp);
-        
-        attAllRemembers();
-    }
-
-
-    private void setAreaPrincipalSerieBox(RememberProgram remember) throws IOException{
-        areaPrincipal.getChildren().clear();
-        
+        SerieBoxController controllerRemember = new SerieBoxController(remember);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../serieBox.fxml"));
         fxmlLoader.setController(controllerRemember);
         Node serieBox = (Node) fxmlLoader.load();
-        areaPrincipal.getChildren().add(serieBox);
+
+        Tab tab = new Tab(remember.getName(), serieBox);
+        tabArea.getTabs().add(tab);
     }
+
 
     private void attAllRemembers() throws ParseException, IOException{
         seriesBox.getChildren().clear();
@@ -143,12 +143,11 @@ public class LayoutController {
             @Override
             public void handle(MouseEvent arg0) {
                 try {
-                    setAreaPrincipalSerieBox(rm);
+                    createNewTabRemember(rm);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-            
+            }    
         });
 
         imgView.setFitHeight(200);
