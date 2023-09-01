@@ -65,7 +65,7 @@ public class SerieBoxController {
         novoEp.setValueFactory(valueFactory);
 
         SpinnerValueFactory<Integer> valueFactoryNt = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10);
-        valueFactoryNt.setValue(1);
+        valueFactoryNt.setValue(remember.getNota());
         novaNota.setValueFactory(valueFactoryNt);
 
         setSerieName(remember.getName());
@@ -104,8 +104,13 @@ public class SerieBoxController {
     
     @FXML
     void atualizarEp(ActionEvent event) {
+        remember.setEp(novoEp.getValue());
+        if (! novaAnalize.getText().isBlank()) remember.setAnalize(novaAnalize.getText());
+        remember.setNota(novaNota.getValue());
+        remember.setDate(new Date());
+
         cn.createConnection();
-        cn.updateRemember(remember.getIdDb(), novoEp.getValue(), new Date(), novaAnalize.getText(), novaNota.getValue());
+        cn.updateRemember(remember);
         cn.closeConnection();
     }
 

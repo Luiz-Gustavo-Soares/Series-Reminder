@@ -186,6 +186,39 @@ public class Conecao {
     }
 
 
+    public boolean updateRemember(RememberProgram remember){
+        String SQL = String.format("SELECT * FROM rememberProgam WHERE id == %s", remember.getIdDb());
+
+        try {
+            ResultSet rs = statement.executeQuery(SQL);
+
+            if (rs.next()) {
+
+                java.sql.Date date = new java.sql.Date(remember.getTime());
+
+
+                SQL = String.format("UPDATE rememberProgam " +
+                "SET ep = '%d', date = '%s', analize = '%s', nota = '%d' "+
+                "WHERE id = %d", remember.getEp(), date, remember.getAnalize(), remember.getNota(), remember.getIdDb());
+
+                try {
+                    statement.executeUpdate(SQL);
+                    return true;
+
+                } catch (SQLException e) {
+                    System.err.println(e.getMessage());
+                    return false;
+                }
+            } 
+            
+            return false;
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+    }
+
     private String salvarArquivo(String nameFile, String name) throws IOException{
         String caminho = "";
 

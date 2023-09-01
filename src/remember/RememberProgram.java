@@ -62,6 +62,11 @@ public class RememberProgram {
         return new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
 
+    public long getTime() {
+
+        return date.getTime();
+    }
+
     public void setDate(Date date) {
         this.date = date;
     }
