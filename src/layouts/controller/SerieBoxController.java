@@ -1,5 +1,7 @@
 package layouts.controller;
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 
 import javafx.event.ActionEvent;
@@ -18,6 +20,8 @@ public class SerieBoxController {
 
     RememberProgram remember;
     Conecao cn = new Conecao();
+    LayoutController layoutPrincipal;
+    int nTab;
     
 
     @FXML
@@ -54,9 +58,28 @@ public class SerieBoxController {
     private Label analize;
     
 
-    public SerieBoxController(RememberProgram rm) {
+    public SerieBoxController(){}
+
+    public SerieBoxController(RememberProgram rm, LayoutController lay) {
         this.remember = rm;
+        layoutPrincipal = lay;
     } 
+
+    public SerieBoxController(LayoutController lay) {
+        layoutPrincipal = lay;
+    } 
+    
+    public void setLayoutPrincipal(LayoutController layoutPrincipal) {
+        this.layoutPrincipal = layoutPrincipal;
+    }
+
+    public void setRemember(RememberProgram remember) {
+        this.remember = remember;
+    }
+
+    public void setnTab(int nTab) {
+        this.nTab = nTab;
+    }
 
     @FXML
     public void initialize() {
@@ -103,7 +126,7 @@ public class SerieBoxController {
     }
     
     @FXML
-    void atualizarEp(ActionEvent event) {
+    void atualizarEp(ActionEvent event) throws ParseException, IOException {
         remember.setEp(novoEp.getValue());
         if (! novaAnalize.getText().isBlank()) remember.setAnalize(novaAnalize.getText());
         remember.setNota(novaNota.getValue());
@@ -112,13 +135,16 @@ public class SerieBoxController {
         cn.createConnection();
         cn.updateRemember(remember);
         cn.closeConnection();
+        layoutPrincipal.attAllRemembers();
     }
 
     @FXML
-    void deleteSerie(ActionEvent event) {
+    void deleteSerie(ActionEvent event) throws ParseException, IOException {
         cn.createConnection();
         cn.deleteRemember(remember.getIdDb());
         cn.closeConnection();
+        layoutPrincipal.attAllRemembers();
+        layoutPrincipal.deleteTab(nTab);
     }
 
 }

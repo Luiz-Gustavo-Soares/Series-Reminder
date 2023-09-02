@@ -33,6 +33,8 @@ public class LayoutController {
     private Conecao cn = new Conecao();
     private String caminhoImage = null;
     private FileChooser filechooser = new FileChooser();
+    SerieBoxController controllerRemember = new SerieBoxController(this);
+
 
     @FXML
     private Button add;
@@ -106,18 +108,27 @@ public class LayoutController {
 
 
     private void createNewTabRemember(RememberProgram remember) throws IOException{
-        
-        SerieBoxController controllerRemember = new SerieBoxController(remember);
+        int nTab = tabArea.getTabs().size() + 1;
+
+        controllerRemember.setRemember(remember);
+        controllerRemember.setnTab(nTab);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../serieBox.fxml"));
         fxmlLoader.setController(controllerRemember);
         Node serieBox = (Node) fxmlLoader.load();
 
         Tab tab = new Tab(remember.getName(), serieBox);
         tabArea.getTabs().add(tab);
+        tabArea.getSelectionModel().select(nTab-1);
     }
 
 
-    private void attAllRemembers() throws ParseException, IOException{
+    void deleteTab(int tab){
+        tabArea.getTabs().remove(tab-1);
+        tabArea.getSelectionModel().select(0);
+    }
+
+    void attAllRemembers() throws ParseException, IOException{
+        System.out.println(this);
         seriesBox.getChildren().clear();
         
         cn.createConnection();
